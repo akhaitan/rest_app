@@ -179,8 +179,6 @@ function deleteRestaurantFromList(event) {
 	}).done(function(response){
 		// Check for successful (blank) response
 		if (response.msg === '') {
-			// Clear the form inputs
-			$('#addRestaurantFields fieldset input').val('');
 			// Update the restaurants list
 			populateListRestaurants(g_currentListId);
 		}
@@ -190,43 +188,3 @@ function deleteRestaurantFromList(event) {
 		}
 	});
 }
-
-/*
-==============================================================================
-All Old Functions Here. Affect/Read from Old Collection (restaurantCollection)
-==============================================================================
-*/
-function populateTable() {
-	$.getJSON('/restlist', function(data) {
-		var tableHTML = "";
-		$.each(data, function() {
-			g_userListDict [this.name] = this;
-			tableHTML += '<tr>';
-			tableHTML += '<td><a href="#" class="linkshowuser" rel="' + this.name + '" title="Show Details">' + this.name + '</a></td>';
-			tableHTML += '<td><a href="#" class="linkdeleteuser" rel="' + this._id + '">delete</a></td>';
-			tableHTML += '</tr>';
-		});
-		// Inject the whole content string into our existing HTML table
-		$('#restDisplayList table tbody').html(tableHTML);
-	});
-};
-
-function showRestaurantInfo(event) {
-
-	event.preventDefault();
-	alert('geaga');
-	$.getJSON('/restInfo?restname=' + $(this).attr('rel'), function(data) {
-		var tableHTML = "";
-
-		$('#restInfoName').text(data.restname);
-		$('#restInfoCuisine').text(data.cuisine);
-		$('#restInfoNumber').text(data.phone);
-		//$('#restInfoWebsite').text(data.website);
-		$('#restInfoAddress').text(data.address);
-		$('#restInfoRatingImage').attr('src', data.ratingImg);
-		//$('#restInfoName').text(data.restname);
-		//$('#restInfoName').text(data.restname);
-
-	});
-};
-

@@ -90,11 +90,9 @@ exports.addRestaurantToList = function(db, yelp) {
 			var allListsTable = db.get('listsSandbox');
 
 			allListsTable.update({listId:req.body.listId}, {$push: {restaurants: restDetails}}, function(err, data) {
-				
 				res.send(
 					(err === null) ? { msg: '' } : { msg: err }
 			    );
-
 			});
 		});
 	};

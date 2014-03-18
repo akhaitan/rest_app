@@ -1,46 +1,6 @@
-extends layout
+extends layout 
 
 block content
 
   #headingDiv
-    h1 Eat More!
-
-  #wrapper
-
-    // Show All lists here
-    #listsDiv
-      #listsTable
-        h2 My Lists
-        table
-          thead
-            th Name
-            th Description
-          tbody
-
-      // Add New List
-      #addListFields
-        fieldset
-          input#listNameEntry(type='text', placeholder='List Name')
-          input#listDescEntry(type='text', placeholder='List Description')
-          button#addListButton Add!
-          
-    // Shows Details of one List
-    #listDetailsDiv
-      h2 
-        <span id='currentListName'>Select a Restaurant!</span>
-      #listRestTable
-        table
-          thead
-            th Restaurant Name
-            th Image
-            th Cuisine
-            th Address
-            th Delete
-          tbody
-
-      // Add Restaurant
-      #addRestaurantFields
-        fieldset
-          input#nameEntry(type='text', placeholder='Restaurant Name')
-          button#addRestaurantButton Add!
-      
+    h1 Index Page

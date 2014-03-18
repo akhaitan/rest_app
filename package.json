@@ -10,6 +10,8 @@
     "jade": "*",
     "mongodb": "*",
     "monk": "*",
-    "yelp": "*"
+    "yelp": "*",
+    "passport": "*",
+    "passport-facebook": "*"
   }
 }
