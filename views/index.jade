@@ -23,21 +23,20 @@ block content
           input#listNameEntry(type='text', placeholder='List Name')
           input#listDescEntry(type='text', placeholder='List Description')
           button#addListButton Add!
-
-
-
+          
     // Shows Details of one List
     #listDetailsDiv
-
       h2 
         <span id='currentListName'>Select a Restaurant!</span>
-      table
-        thead
-          th Restaurant Name
-          th Image
-          th Cuisine
-          th Address
-        tbody
+      #listRestTable
+        table
+          thead
+            th Restaurant Name
+            th Image
+            th Cuisine
+            th Address
+            th Delete
+          tbody
 
       // Add Restaurant
       #addRestaurantFields

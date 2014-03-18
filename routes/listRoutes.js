@@ -33,10 +33,10 @@ exports.getListDetails = function(db) {
 		var allListsTable = db.get('listsSandbox');
 		allListsTable.find({listId:listId}, {}, function(e, listDetails) {
 			console.log("---");
-			console.log(e);
-			console.log(listDetails);
-			console.log(listDetails[0].restaurants);
-			console.log(listDetails[0]);
+			//console.log(e);
+			//console.log(listDetails);
+			//console.log(listDetails[0].restaurants);
+			//console.log(listDetails[0]);
 			res.json({
 				listname: listDetails[0].name,
 				restaurants: listDetails[0].restaurants
@@ -73,6 +73,11 @@ exports.addRestaurantToList = function(db, yelp) {
 			yelpDetails = data.businesses[0];
 			console.log("Details:");
 			console.log(yelpDetails.categories);
+			var listId = req.body.listId;
+			var restId = yelpDetails.name.replace(/ /g, '_');
+			restId = listId + "_" + restId;
+			console.log(restId);
+			restDetails.restId = restId;
 			restDetails.name = yelpDetails.name;
 			restDetails.cuisine = yelpDetails.categories[0][0];
 			restDetails.stars = yelpDetails.rating_img_url;
@@ -84,13 +89,28 @@ exports.addRestaurantToList = function(db, yelp) {
 
 			var allListsTable = db.get('listsSandbox');
 
-			allListsTable.update({listId:req.body.listId}, {$push: {restaurants: restDetails}}, function(error, data) {
+			allListsTable.update({listId:req.body.listId}, {$push: {restaurants: restDetails}}, function(err, data) {
 				
 				res.send(
-					(error === null) ? { msg: '' } : { msg: error }
+					(err === null) ? { msg: '' } : { msg: err }
 			    );
 
 			});
+		});
+	};
+};
+
+/* Function to delete a given restaurant from a list */
+exports.deleteRestaurantFromList = function(db) {
+	return function(req, res) {
+		console.log("------deleting restaurant from list");
+		var allListsCollection = db.get('listsSandbox');
+		var listId = req.body.listId;
+		var restId = req.body.restId;
+		allListsCollection.update({listId:listId}, {$pull: {restaurants: {restId: restId}}}, function(err, data) {
+			res.send(
+				(err === null) ? { msg: '' } : { msg: err }
+			);
 		});
 	};
 };

@@ -13,6 +13,7 @@ $(document).ready(function() {
 	
 	//list details related items
 	$('#addRestaurantButton').on('click', addRestaurantToList);
+	$('#listRestTable table tbody').on('click', 'td a.deleteRestLink', deleteRestaurantFromList);
 });
 
 // Populates lists table 
@@ -48,10 +49,12 @@ function populateListRestaurants(listId) {
 			restaurantsTableHTML += '<td><img src="' + this.stars + '"/></td>';
 			restaurantsTableHTML += '<td>' + this.cuisine + '</td>';
 			restaurantsTableHTML += '<td>' + this.address + '</td>';
+
+			restaurantsTableHTML += '<td><a href="#" class="deleteRestLink" rel="' + this.restId + '">Delete</a></td>';
 			restaurantsTableHTML += '</tr>';
 
 		});
-		$('#listDetailsDiv table tbody').html(restaurantsTableHTML);
+		$('#listRestTable table tbody').html(restaurantsTableHTML);
 	});
 
 };
@@ -156,7 +159,43 @@ function addRestaurantToList(event) {
 	}
 };
 
-//All Old Functions Here. Affect/Read from Old Collection (restaurantCollection)
+function deleteRestaurantFromList(event) {
+	event.preventDefault();
+	if(!g_currentListId) {
+		alert('No List Opened');
+		return false;
+	}
+	var listId = g_currentListId;
+	var restId = $(this).attr('rel');
+	var delRestInfo = {
+		listId: listId,
+		restId: restId
+	};
+	$.ajax({
+		type: 'DELETE',
+		data: delRestInfo,
+		url: '/delRestFromList',
+		dataType:'JSON'
+	}).done(function(response){
+		// Check for successful (blank) response
+		if (response.msg === '') {
+			// Clear the form inputs
+			$('#addRestaurantFields fieldset input').val('');
+			// Update the restaurants list
+			populateListRestaurants(g_currentListId);
+		}
+		else {
+			// If something goes wrong, alert the error message that our service returned
+			alert('Error: ' + response.msg);
+		}
+	});
+}
+
+/*
+==============================================================================
+All Old Functions Here. Affect/Read from Old Collection (restaurantCollection)
+==============================================================================
+*/
 function populateTable() {
 	$.getJSON('/restlist', function(data) {
 		var tableHTML = "";
@@ -170,10 +209,6 @@ function populateTable() {
 		// Inject the whole content string into our existing HTML table
 		$('#restDisplayList table tbody').html(tableHTML);
 	});
-};
-
-function deleteRestaurant(event) {
-	alert("delete");
 };
 
 function showRestaurantInfo(event) {

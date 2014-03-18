@@ -49,8 +49,11 @@ app.get('/users', user.list);
 app.get('/listInfo', listAPI.getListInfo(db));
 app.get('/allLists', listAPI.getAllLists(db));
 app.get('/listDetails', listAPI.getListDetails(db));
+
 app.post('/addRestToList', listAPI.addRestaurantToList(db, yelp));
 app.post('/addList', listAPI.addList(db, yelp));
+
+app.delete('/delRestFromList', listAPI.deleteRestaurantFromList(db));
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
