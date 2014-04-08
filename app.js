@@ -21,11 +21,13 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 //   have a database of user records, the complete Facebook profile is serialized
 //   and deserialized.
 passport.serializeUser(function(user, done) {
-	console.log(user);
+	console.log('--------------------------');
+  console.log(user);
   done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
+  console.log('deserializing');
   done(null, obj);
 });
 
@@ -33,12 +35,14 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new FacebookStrategy({
     clientID: 218193641713381,
     clientSecret: 'c93905acf143a01f0effaae1e1e01417',
-    callbackURL: "http://localhost.local:3000/auth/facebook/callback"
+    callbackURL: "http://localhost.local:3000/auth/facebook/callback",
+    profileFields: ['id', 'displayName', 'photos']
   },
   function(accessToken, refreshToken, profile, done) {
     //asynchronous verification
     process.nextTick(function () {
-      
+      console.log("prof");
+      console.log(profile);
       // the user's Facebook profile is returned to
       // represent the logged-in user.  In a typical application, you would want
       // to associate the Facebook account with a user record in your database,
@@ -53,8 +57,8 @@ passport.use(new FacebookStrategy({
 //default port: 27017
 //monk is an interface for mongo. monk requires mongo
 var monk = require('monk')
-var db = monk('localhost.local:27017/rest_list_db')
-
+//var db = monk('localhost.local:27017/rest_list_db')
+var db = monk('mongodb://akhaitan10:ayush2cool@ds037987.mongolab.com:37987/heroku_app23307491')
 //yelp yo
 var yelp = require("yelp").createClient({
   consumer_key: "dpm6UN-damdiFynXIWKvVA", 
@@ -77,6 +81,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
@@ -104,27 +109,36 @@ http.createServer(app).listen(app.get('port'), function(){
 });
 
 
+app.get('/profile2', function(req, res) {
+    console.log("profile2");
+    console.log(req.user);
+    console.log("-----");
+    //console.log(req);
+    res.render('profile.ejs', {
+      user : req.user // get the user out of session and pass to template
+    });
+  });
+
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login')
+}
+
 //Login Routes
 app.get('/login', userAPI.login(passport, FacebookStrategy));
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
 //     /auth/facebook/callback
 app.get('/auth/facebook',
-  passport.authenticate('facebook'),
-  function(req, res){
-    // The request will be redirected to Facebook for authentication, so this
-    // function will not be called.
-  });
+  passport.authenticate('facebook'));
 
 // Facebook will redirect the user to this URL after approval.  Finish the
 // authentication process by attempting to obtain an access token.  If
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
 app.get('/auth/facebook/callback', 
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/userDashboard');
-  });
+  passport.authenticate('facebook', { failureRedirect: '/login', successRedirect: '/userDashboard' }));
 
 // See http://www.yelp.com/developers/documentation/v2/search_api
 //yelp.search({term: "Tommy Lasagna", location: "New York City", limit: 3}, function(error, data) {

@@ -11,5 +11,9 @@ exports.login = function(passport, fbStrategy) {
 };
 
 exports.populateUserDashboard = function(req, res) {
+	console.log("abc");
+	console.log(req.profile);
+	console.log("user");
+	console.log(req.user);
 	res.render('listDashboard');
 }
