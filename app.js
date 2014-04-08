@@ -21,7 +21,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 //   have a database of user records, the complete Facebook profile is serialized
 //   and deserialized.
 passport.serializeUser(function(user, done) {
-	console.log('--------------------------');
+	console.log('serializing user')
   console.log(user);
   done(null, user);
 });
@@ -81,11 +81,16 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 // Initialize Passport!  Also use passport.session() middleware, to support
 // persistent login sessions (recommended).
+//app.use(express.session({ secret: 'anything' }));
 
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.cookieParser());
+app.use(express.bodyParser());
+app.use(express.session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+
 
 // development only
 if ('development' == app.get('env')) {
@@ -127,18 +132,39 @@ function ensureAuthenticated(req, res, next) {
 
 //Login Routes
 app.get('/login', userAPI.login(passport, FacebookStrategy));
+
+
+
+app.get('/auth/facebook',
+  passport.authenticate('facebook'),
+  function(req, res){
+});
+
+app.get('/auth/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/' }),
+  function(req, res) {
+    res.redirect('/userDashboard');
+});
+
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
+
+
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
 //     /auth/facebook/callback
-app.get('/auth/facebook',
-  passport.authenticate('facebook'));
+//app.get('/auth/facebook',
+//  passport.authenticate('facebook'));
 
 // Facebook will redirect the user to this URL after approval.  Finish the
 // authentication process by attempting to obtain an access token.  If
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
-app.get('/auth/facebook/callback', 
-  passport.authenticate('facebook', { failureRedirect: '/login', successRedirect: '/userDashboard' }));
+//app.get('/auth/facebook/callback', 
+//  passport.authenticate('facebook', { failureRedirect: '/login', successRedirect: '/userDashboard' }));
 
 // See http://www.yelp.com/developers/documentation/v2/search_api
 //yelp.search({term: "Tommy Lasagna", location: "New York City", limit: 3}, function(error, data) {

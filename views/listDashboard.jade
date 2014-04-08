@@ -2,7 +2,17 @@ extends listDashboard_layout
 
 block content
 
+  h2 #{locals.username}
   #headingDiv
+    table
+      tbody
+        tr
+          td(width="80%") 
+            h1 Eat More!
+          td 
+            h3 #{uname}
+          td
+            img(src= "#{uthumbnail}")
     h1 Eat More!
 
   #wrapper
@@ -10,7 +20,7 @@ block content
     // Show All lists here
     #listsDiv
       #listsTable
-        h2 My Lists
+        h2 Saved Lists
         table
           thead
             th Name
