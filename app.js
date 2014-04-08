@@ -91,7 +91,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
 
-
+console.log("environment is ", app.get('env'))
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
